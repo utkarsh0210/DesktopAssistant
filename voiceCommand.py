@@ -79,16 +79,16 @@ def ai(prompt):
 '''
 
 def takeCommand():
-    #it takes input from microphone and returns a string output
-    r=sr.Recognizer()
+    '''it takes input from microphone and returns a string output using speech recognition module '''
+    r=sr.Recognizer()    #Recognizer is a class
     with sr.Microphone() as source:
         print("Listening...")
-        r.pause_threshold = 1
+        r.pause_threshold = 1    #Its a parameter which can be adjusted,by right clicking on it we can see other parameters as well.
         audio = r.listen(source)
 
     try:
         print("recognizing...")
-        query = r.recognize_google(audio, language='en-in')
+        query = r.recognize_google(audio, language='en-in')    #recognize_bing , recognize_google_cloud , etc
         print(f"User said: {query}\n")
 
     except Exception as e:
@@ -108,41 +108,36 @@ if __name__ == "__main__":
             speak('My name is bharvishya. It comprises of two words that is Bharat and Bhavishya. Which means Indias future')
         elif 'wikipedia' in query:
             speak("Searching wikipedia...")
-            query = query.replace("wikipedia", "")
-            results = wikipedia.summary(query, sentences=2)
+            query = query.replace("wikipedia", "")    #it replaces the word wikipedia with a blank and searches it in on wikipedia
+            results = wikipedia.summary(query, sentences=2)    
             speak("according to wikipedia")
-            print(results)
+            #print(results)
             speak(results)
-            #i=i+1
 
         elif 'open youtube' in query:
             webbrowser.open("youtube.com")
-            #i=i+1
 
         elif 'open google' in query:
-            speak("Here you go to Google.Enjoy exploring")
             webbrowser.open("google.com")
-            #i=i+1
 
         elif 'search' in query:
             query = query.replace("search", "")           
             webbrowser.open(query)
 
         elif 'open chatGPT' in query:
-            webbrowser.open("https:\\//chat.openai.com\/chat")
+            webbrowser.open("https:\\//chat.openai.com\/chat")    
 
         elif 'open stack overflow' in query:
-            speak("Here you go to Stack Overflow. Happy coding")
             webbrowser.open("stackoverflow.com")
-            i=i+1
+
+        elif 'show my linkedin' in query:
+            webbrowser.open("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
 
         elif 'open my github' in query:
             webbrowser.open("https://github.com/utkarsh0210")
-            #i=i+1
 
         elif 'open webkiosk' in query:
             webbrowser.open("webkiosk.juet.ac.in")
-            #i=i+1
 
         elif 'download video' in query:
             from pytube import YouTube
@@ -176,7 +171,7 @@ if __name__ == "__main__":
         elif 'play some music' in query:
             speak("Here you go with music")
             musicpath = "E:\MojMasti\music"
-            songs=os.listdir(musicpath)
+            songs=os.listdir(musicpath)    #listdir func lists down all the content in this directory
             os.startfile(os.path.join(musicpath,songs[random.randint(1,10)]))
 
         elif 'shuffle it' in query:
@@ -222,12 +217,12 @@ if __name__ == "__main__":
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"the time is{strTime}")
-            #i=i+1
 
         elif 'open code' in query:
-            codePath = "C:\\Users\\utkun\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            codePath = "C:\\Users\\utkun\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"    #double back slash for escape sequence
             os.startfile(codePath)
-            #i=i+1
+
+        #GUI functions/commands
         
         elif 'internet speed' in query :
             def speedcheck():
@@ -237,7 +232,6 @@ if __name__ == "__main__":
                 up = str(round(s.download()/(10**6),3))+"Mbps"
                 lab_d.config(text=down)
                 lab_u.config(text=up)
-
 
             sp=Tk()
             sp.title(" Internet Speed Test ")
@@ -262,19 +256,8 @@ if __name__ == "__main__":
             button = Button(sp,text = "CHECK",font=("Time New Roman",20),bg="red",relief=RAISED,command=speedcheck())
             button.place(x=175,y=280,height = 40)
             time.sleep(4)
-
             sp.mainloop()
 
-        elif 'camera' in query or 'photo' in query:
-            ec.capture(0, "jarvis camera","img.jpg")
-            #i=i+1
-
-        elif 'open notes' in query:
-            speak("what should i write sir")
-            note = takeCommand()
-            file = open('jarvis.txt', 'w')
-            file.write(note)
-            #i=i+1
 
         elif 'to do list' in query:
             root=Tk()
@@ -364,6 +347,15 @@ if __name__ == "__main__":
             Button(root,image=Delete_icon,bd=0,cursor="hand2",command=deleteTask).pack(side=BOTTOM,pady=13)
             root.mainloop()
 
+        elif 'camera' in query or 'photo' in query:
+            ec.capture(0, "jarvis camera","img.jpg")
+
+        elif 'open notes' in query:
+            speak("what should i write sir")
+            note = takeCommand()
+            file = open('jarvis.txt', 'w')
+            file.write(note)
+        
         elif "don't listen" in query or "stop listening" in query:
             speak("for how much time you want to stop Bharvishya")
             a = int(takeCommand())
@@ -371,23 +363,18 @@ if __name__ == "__main__":
             print(a)
 
         elif 'how are you' in query:
-            speak("I am fine, Thank you")
+            speak("I am fine, Thank you for asking")
             speak("How are you, Sir")
  
-        elif 'fine' in query:
-            speak("It's good to know that your fine")
+        elif 'i am fine' in query:
+            speak("It's good to know that you are fine")
 
         elif 'open snipping tool' in query:
             snip_tool = open("%windir%\\system32\\SnippingTool.exe")
-            #i=i+1
 
         elif 'open whatsapp' in query:
             what_sapp = open("C:\\Users\\utkun\\AppData\\Local\\WhatsApp\\WhatsApp.exe")
             what_sapp=csv.reader(what_sapp)
-            #i=i+1
-
-        elif 'show my linkedin' in query:
-            webbrowser.open("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
             
         elif 'exit' in query:
             speak("Thanks for giving me your time")
@@ -398,13 +385,12 @@ if __name__ == "__main__":
 
         elif "morning" in query:
             speak("A warm good" +query+"to you too")
-            speak("How are you Mister")
 
         elif 'joke' in query:
             speak(pyjokes.get_joke())
 
         elif "why you came to world" in query:
-            speak("Thanks to Utkarsh. further It's a secret")
+            speak("Thanks to Utkarsh, further It's a secret")
 
         elif 'shutdown' in query:
             speak("Hold On a Sec ! Your system is on its way to shut down")
@@ -415,12 +401,7 @@ if __name__ == "__main__":
 
         '''
         elif 'search'.lower() in query.lower():
-            ai(prompt=query)
-            
+            ai(prompt=query)  
         else:
             chat(chatStr=query)
 '''
-
-        
-
-        
