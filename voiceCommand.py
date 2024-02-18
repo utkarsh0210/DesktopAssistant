@@ -16,6 +16,9 @@ import pyaudio
 import csv
 from tkinter import *
 import speedtest
+from email.message import EmailMessage
+import ssl
+import smtplib
 
 
 engine = pyttsx3.init('sapi5')
@@ -188,6 +191,62 @@ if __name__ == "__main__":
             speak("User asked to Locate")
             speak(location)
             webbrowser.open("https://www.google.nl / maps / place/" + location + "")
+
+
+        elif "draft an email" in query:
+            speak("Okay sir,can you share the required details with us")
+            w=Tk()
+            w.title('Details')
+            def submit():
+                sender=fr.get()
+                pwd=pw.get()
+                receiver=to.get()
+                print(sender)
+                print(pwd)
+                print(receiver)
+                speak("Now say the message that you want to send")
+                msg=takeCommand()
+                body=msg
+                sen = Button(w,text="Send",command=send)
+                sen.pack()
+                
+                def send():
+                    email_sender = sender
+                    email_password = pwd
+                    email_receiver = receiver
+                    em = EmailMessage()
+                    em['from'] = email_sender
+                    em['To'] = email_receiver
+                    em['Subject'] = su
+                    em.set_content(body)
+                    context = ssl.create_default_context()
+
+                    with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
+                        smtp.login(email_sender,email_password)
+                        smtp.sendmail(email_sender,email_receiver,em.as_string())
+
+
+            f = Label(w,text="Sender Email address")
+            f.pack()
+            fr=Entry(w)
+            fr.pack()
+            p = Label(w,text="Enter your password")
+            p.pack()
+            pw=Entry(w)
+            pw.pack()
+            t = Label(w,text="Receiver Email address")
+            t.pack()
+            to=Entry(w)
+            to.pack()
+            s = Label(w,text="Subject")
+            s.pack()
+            su=Entry()
+            su.pack()
+            button = Button(w,text = "Submit",command=submit)
+            button.pack()
+            w.mainloop()
+            
+            
 
         elif 'screen recording' in query:
             import cv2
