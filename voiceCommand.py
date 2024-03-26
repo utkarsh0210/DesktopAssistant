@@ -270,7 +270,6 @@ if __name__ == "__main__":
             time.sleep(4)
             sp.mainloop()
 
-
         elif 'to do list' in query:
             root=Tk()
             root.title("To-Do App")
@@ -374,7 +373,7 @@ if __name__ == "__main__":
                 speak("Now say the message that you want to send")
                 msg=takeCommand()
                 body=msg
-                def send():
+                def send(sender,pwd,receiver,sub,body):
                     email_sender = sender
                     email_password = pwd
                     email_receiver = receiver
@@ -391,11 +390,11 @@ if __name__ == "__main__":
                             speak("Email has been sent successfully.")
                             w.destroy()
                     except smtplib.SMTPAuthenticationError as e:
-                        speak("SMTP Authentication Error")
+                        speak("Sorry! SMTP Authentication Error")
+                        w.destroy()
                     except Exception as e:
                         speak("An error occurred")
-
-
+                        w.destroy()
                 sen = Button(w,text="Send",command=send)
                 sen.pack()
 
@@ -405,7 +404,7 @@ if __name__ == "__main__":
             fr.pack()
             p = Label(w,text="Enter your password")
             p.pack()
-            pw=Entry(w)
+            pw = Entry(w, show="*")  # Mask the password
             pw.pack()
             t = Label(w,text="Receiver Email address")
             t.pack()
@@ -418,7 +417,54 @@ if __name__ == "__main__":
             button = Button(w,text = "Submit",command=submit)
             button.pack()
             w.mainloop()
-
+        
+        elif 'convert to' in query:
+            from pdf2docx import Converter
+            from docx2pdf import convert
+            c = Tk()
+            c.title("Conversion")
+            c.geometry("500x400")
+            def convert_to_doc():
+                Label(c,text="PDF name").pack()
+                pdf = Entry(c)
+                pdf.pack()
+                def do_itdoc():
+                    try:
+                        old_pdf=pdf.get()
+                        new_doc = "new.docx"
+                        obj = Converter(old_pdf)
+                        obj.convert(new_doc)
+                        obj.close()
+                        speak("Converted to document successfully!!")
+                        c.destroy()
+                    except Exception as e:
+                        speak("An error occured")
+                        c.destroy()
+                button = Button(c,text = "Convert",command=do_itdoc)
+                button.pack()
+                
+            def convert_to_pdf():
+                Label(c,text="DOC name").pack()
+                doc = Entry(c)
+                doc.pack()
+                def do_itpdf():
+                    try:
+                        old_doc=doc.get()
+                        new_pdf = "new.pdf"
+                        convert(old_doc,new_pdf)
+                        speak("Converted to PDF Successfully")
+                        c.destroy()
+                    except Exception as e:
+                        speak("An error occured")
+                        c.destroy()
+                button = Button(c,text="Convert",command=do_itpdf)
+                button.pack()
+                
+            button1 = Button(c,text = "Convert to DOCX",command =convert_to_doc)
+            button1.pack()
+            button2 = Button(c,text = "Convert to PDF",command =convert_to_pdf)
+            button2.pack()
+            c.mainloop()
 
         '''
         ******************************
@@ -427,7 +473,7 @@ if __name__ == "__main__":
         NEW IDEA
         word to pdf,doc
         ******************************
-        '''      
+        '''         
 
         '''
         elif 'screen recording' in query:
@@ -454,9 +500,6 @@ if __name__ == "__main__":
                     break
             output.release()
             speak("Recording Ended")
-            
-
-        
 
         elif 'camera' in query or 'photo' in query:
             ec.capture(0, "jarvis camera","img.jpg")
