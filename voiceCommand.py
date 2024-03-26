@@ -19,6 +19,7 @@ import speedtest
 from email.message import EmailMessage
 import ssl
 import qrcode as qr
+from tkinter.messagebox import askyesno
 
 engine = pyttsx3.init('sapi5')
 voices=engine.getProperty('voices')
@@ -187,7 +188,11 @@ if __name__ == "__main__":
                     linkedin_img = qr.make(lid)
                     git_img.save("Github.png")
                     linkedin_img.save("LinkedIn.png")
-                    speak("QR codes generated")
+                    ans = askyesno(title="Exit",message = "Do you want to exit?")
+                    if ans == True:
+                        speak("QR codes generated")
+                        sc.destroy()
+                    
                     
             except Exception as e:
                 speak("An error occured")
