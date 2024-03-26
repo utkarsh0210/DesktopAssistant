@@ -18,8 +18,7 @@ from tkinter import *
 import speedtest
 from email.message import EmailMessage
 import ssl
-import smtplib
-
+import qrcode as qr
 
 engine = pyttsx3.init('sapi5')
 voices=engine.getProperty('voices')
@@ -134,10 +133,20 @@ if __name__ == "__main__":
             webbrowser.open("stackoverflow.com")
 
         elif 'show my linkedin' in query:
-            webbrowser.open("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
+            if 'utkarsh gupta' in query:
+                webbrowser.open("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
+            #elif 'aditya singh' in query:
+                #webbrowser.open("https://www.linkedin.com/in/aditya-singh-/")
+            elif 'pramiti tewari' in query:
+                webbrowser.open("https://www.linkedin.com/in/pramiti-tewari-648b51285/")
 
         elif 'open my github' in query:
-            webbrowser.open("https://github.com/utkarsh0210")
+            if 'utkarsh gupta' in query:
+                webbrowser.open("https://github.com/utkarsh0210")
+            elif 'aditya singh' in query:
+                webbrowser.open( "https://github.com/Proxyserver6927") 
+            elif 'pramiti tewari' in query:
+                webbrowser.open("https://github.com/ptewari09")
 
         elif 'open webkiosk' in query:
             webbrowser.open("webkiosk.juet.ac.in")
@@ -159,12 +168,34 @@ if __name__ == "__main__":
             print(" Successfully downloaded ")
 
         elif 'scanner' in query:
-            import qrcode as qr
-            git_img = qr.make("https://github.com/utkarsh0210")
-            git_img.save("Github.png")
-
-            linkedin_img = qr.make("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
-            linkedin_img.save("LinkedIn.png")
+            sc = Tk()
+            sc.title("Details")
+            sc.geometry("500x400")
+            git_id = Label(sc,text="Git Hub ID")
+            git_id.pack()
+            git = Entry(sc)
+            git.pack()
+            link_id = Label(sc,text="LinkedIn ID")
+            link_id.pack()
+            link = Entry(sc)
+            link.pack()
+            try:
+                def scan():
+                    gid = git.get()
+                    lid = link.get()
+                    git_img = qr.make(gid)
+                    linkedin_img = qr.make(lid)
+                    git_img.save("Github.png")
+                    linkedin_img.save("LinkedIn.png")
+                    speak("QR codes generated")
+                    
+            except Exception as e:
+                speak("An error occured")
+            button = Button(sc,text="Generate",command=scan)
+            button.pack()
+            time.sleep(2)
+            sc.mainloop()
+            
 
         elif 'display movies' in query:
             speak("Enjoy your time sir!!")
@@ -192,86 +223,6 @@ if __name__ == "__main__":
             speak(location)
             webbrowser.open("https://www.google.nl / maps / place/" + location + "")
 
-
-        elif "draft an email" in query:
-            speak("Okay sir,can you share the required details with us")
-            w=Tk()
-            w.title('Details')
-            def submit():
-                sender=fr.get()
-                pwd=pw.get()
-                receiver=to.get()
-                print(sender)
-                print(pwd)
-                print(receiver)
-                speak("Now say the message that you want to send")
-                msg=takeCommand()
-                body=msg
-                sen = Button(w,text="Send",command=send)
-                sen.pack()
-                
-                def send():
-                    email_sender = sender
-                    email_password = pwd
-                    email_receiver = receiver
-                    em = EmailMessage()
-                    em['from'] = email_sender
-                    em['To'] = email_receiver
-                    em['Subject'] = su
-                    em.set_content(body)
-                    context = ssl.create_default_context()
-
-                    with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
-                        smtp.login(email_sender,email_password)
-                        smtp.sendmail(email_sender,email_receiver,em.as_string())
-
-
-            f = Label(w,text="Sender Email address")
-            f.pack()
-            fr=Entry(w)
-            fr.pack()
-            p = Label(w,text="Enter your password")
-            p.pack()
-            pw=Entry(w)
-            pw.pack()
-            t = Label(w,text="Receiver Email address")
-            t.pack()
-            to=Entry(w)
-            to.pack()
-            s = Label(w,text="Subject")
-            s.pack()
-            su=Entry()
-            su.pack()
-            button = Button(w,text = "Submit",command=submit)
-            button.pack()
-            w.mainloop()
-            
-            
-
-        elif 'screen recording' in query:
-            import cv2
-            import pyautogui
-            from win32api import GetSystemMetrics
-            import numpy as np
-            import time
-            width = GetSystemMetrics(0)
-            height = GetSystemMetrics(1)
-            dim = (width,height)
-            f= cv2.VideoWriter_fourcc(*"XVID")
-            output = cv2.VideoWriter("test.mp4",f,30.0,dim)
-            now_start_tine = time.time()
-            dur=10
-            end_time = now_start_tine + dur
-            while True:
-                image = pyautogui.screenshot()
-                frame_1 = np.array(image)
-                frame = cv2.cvtColor(frame_1,cv2.COLOR_BGR2RGB)
-                output.write(frame)
-                c_time = time.time()
-                if c_time > end_time :
-                    break
-            output.release()
-            speak("Recording Ended")
 
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
@@ -398,13 +349,111 @@ if __name__ == "__main__":
 
             listbox.config(yscrollcommand=scrollbar.set)
             scrollbar.config(command=listbox.yview)
-
             openTask()
-
             #delete
             Delete_icon = PhotoImage(file="delete.png")
             Button(root,image=Delete_icon,bd=0,cursor="hand2",command=deleteTask).pack(side=BOTTOM,pady=13)
             root.mainloop()
+
+        
+        elif "write an email" in query:
+            speak("Okay sir,can you share the required details with us")
+            w=Tk()
+            w.title('Details')
+            w.geometry("500x400")
+            def submit():
+                sender=fr.get()
+                pwd=pw.get()
+                receiver=to.get()
+                sub=su.get()
+                print(sender)
+                print(pwd)
+                print(receiver)
+                speak("Now say the message that you want to send")
+                msg=takeCommand()
+                body=msg
+                def send():
+                    email_sender = sender
+                    email_password = pwd
+                    email_receiver = receiver
+                    em = EmailMessage()
+                    em['from'] = email_sender
+                    em['To'] = email_receiver
+                    em['Subject'] = sub
+                    em.set_content(body)
+                    context = ssl.create_default_context()
+                    try:
+                        with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
+                            smtp.login(email_sender,email_password)
+                            smtp.sendmail(email_sender,email_receiver,em.as_string())
+                            speak("Email has been sent successfully.")
+                    except smtplib.SMTPAuthenticationError as e:
+                        speak("SMTP Authentication Error")
+                    except Exception as e:
+                        speak("An error occurred")
+
+
+                sen = Button(w,text="Send",command=send)
+                sen.pack()
+
+            f = Label(w,text="Sender Email address")
+            f.pack()
+            fr=Entry(w)
+            fr.pack()
+            p = Label(w,text="Enter your password")
+            p.pack()
+            pw=Entry(w)
+            pw.pack()
+            t = Label(w,text="Receiver Email address")
+            t.pack()
+            to=Entry(w)
+            to.pack()
+            s = Label(w,text="Subject")
+            s.pack()
+            su=Entry()
+            su.pack()
+            button = Button(w,text = "Submit",command=submit)
+            button.pack()
+            w.mainloop()
+
+
+        '''
+        ******************************
+        NEW IDEA
+        Generative AI images app
+        NEW IDEA
+        word to pdf,doc
+        ******************************
+        '''      
+
+        '''
+        elif 'screen recording' in query:
+            import cv2
+            import pyautogui
+            from win32api import GetSystemMetrics
+            import numpy as np
+            import time
+            width = GetSystemMetrics(0)
+            height = GetSystemMetrics(1)
+            dim = (width,height)
+            f= cv2.VideoWriter_fourcc(*"XVID")
+            output = cv2.VideoWriter("test.mp4",f,30.0,dim)
+            now_start_tine = time.time()
+            dur=10
+            end_time = now_start_tine + dur
+            while True:
+                image = pyautogui.screenshot()
+                frame_1 = np.array(image)
+                frame = cv2.cvtColor(frame_1,cv2.COLOR_BGR2RGB)
+                output.write(frame)
+                c_time = time.time()
+                if c_time > end_time :
+                    break
+            output.release()
+            speak("Recording Ended")
+            
+
+        
 
         elif 'camera' in query or 'photo' in query:
             ec.capture(0, "jarvis camera","img.jpg")
@@ -458,9 +507,8 @@ if __name__ == "__main__":
         elif "restart" in query:
             subprocess.call(["shutdown", "/r"])
 
-        '''
         elif 'search'.lower() in query.lower():
             ai(prompt=query)  
         else:
             chat(chatStr=query)
-'''
+        '''
