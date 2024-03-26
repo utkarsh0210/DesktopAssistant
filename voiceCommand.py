@@ -192,16 +192,13 @@ if __name__ == "__main__":
                     if ans == True:
                         speak("QR codes generated")
                         sc.destroy()
-                    
-                    
             except Exception as e:
                 speak("An error occured")
+                sc.destroy()
             button = Button(sc,text="Generate",command=scan)
             button.pack()
-            time.sleep(2)
             sc.mainloop()
             
-
         elif 'display movies' in query:
             speak("Enjoy your time sir!!")
             moviepath = "E:\MojMasti\movies"
@@ -234,7 +231,7 @@ if __name__ == "__main__":
             speak(f"the time is{strTime}")
 
         elif 'open code' in query:
-            codePath = "C:\\Users\\utkun\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"    #double back slash for escape sequence
+            codePath = "C:\\Users\\utkun\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe" #double back slash for escape sequence
             os.startfile(codePath)
 
         #GUI functions/commands
@@ -392,6 +389,7 @@ if __name__ == "__main__":
                             smtp.login(email_sender,email_password)
                             smtp.sendmail(email_sender,email_receiver,em.as_string())
                             speak("Email has been sent successfully.")
+                            w.destroy()
                     except smtplib.SMTPAuthenticationError as e:
                         speak("SMTP Authentication Error")
                     except Exception as e:
