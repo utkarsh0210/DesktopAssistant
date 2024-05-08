@@ -16,8 +16,11 @@ import pyaudio
 import csv
 from tkinter import *
 import speedtest
-
-
+from email.message import EmailMessage
+import ssl
+import qrcode as qr
+from tkinter.messagebox import askyesno
+#testing2.0
 engine = pyttsx3.init('sapi5')
 voices=engine.getProperty('voices')
 #print(voices[1].id)
@@ -79,16 +82,16 @@ def ai(prompt):
 '''
 
 def takeCommand():
-    #it takes input from microphone and returns a string output
-    r=sr.Recognizer()
+    '''it takes input from microphone and returns a string output using speech recognition module '''
+    r=sr.Recognizer()    #Recognizer is a class
     with sr.Microphone() as source:
         print("Listening...")
-        r.pause_threshold = 1
+        r.pause_threshold = 1    #Its a parameter which can be adjusted,by right clicking on it we can see other parameters as well.
         audio = r.listen(source)
 
     try:
         print("recognizing...")
-        query = r.recognize_google(audio, language='en-in')
+        query = r.recognize_google(audio, language='en-in')    #recognize_bing , recognize_google_cloud , etc
         print(f"User said: {query}\n")
 
     except Exception as e:
@@ -108,41 +111,46 @@ if __name__ == "__main__":
             speak('My name is bharvishya. It comprises of two words that is Bharat and Bhavishya. Which means Indias future')
         elif 'wikipedia' in query:
             speak("Searching wikipedia...")
-            query = query.replace("wikipedia", "")
-            results = wikipedia.summary(query, sentences=2)
+            query = query.replace("wikipedia", "")    #it replaces the word wikipedia with a blank and searches it in on wikipedia
+            results = wikipedia.summary(query, sentences=2)    
             speak("according to wikipedia")
-            print(results)
+            #print(results)
             speak(results)
-            #i=i+1
 
         elif 'open youtube' in query:
             webbrowser.open("youtube.com")
-            #i=i+1
 
         elif 'open google' in query:
-            speak("Here you go to Google.Enjoy exploring")
             webbrowser.open("google.com")
-            #i=i+1
 
         elif 'search' in query:
             query = query.replace("search", "")           
             webbrowser.open(query)
 
         elif 'open chatGPT' in query:
-            webbrowser.open("https:\\//chat.openai.com\/chat")
+            webbrowser.open("https:\\//chat.openai.com\/chat")    
 
         elif 'open stack overflow' in query:
-            speak("Here you go to Stack Overflow. Happy coding")
             webbrowser.open("stackoverflow.com")
-            i=i+1
+
+        elif 'show my linkedin' in query:
+            if 'utkarsh gupta' in query:
+                webbrowser.open("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
+            #elif 'aditya singh' in query:
+                #webbrowser.open("https://www.linkedin.com/in/aditya-singh-/")
+            elif 'pramiti tewari' in query:
+                webbrowser.open("https://www.linkedin.com/in/pramiti-tewari-648b51285/")
 
         elif 'open my github' in query:
-            webbrowser.open("https://github.com/utkarsh0210")
-            #i=i+1
+            if 'utkarsh gupta' in query:
+                webbrowser.open("https://github.com/utkarsh0210")
+            elif 'aditya singh' in query:
+                webbrowser.open( "https://github.com/Proxyserver6927") 
+            elif 'pramiti tewari' in query:
+                webbrowser.open("https://github.com/ptewari09")
 
         elif 'open webkiosk' in query:
             webbrowser.open("webkiosk.juet.ac.in")
-            #i=i+1
 
         elif 'download video' in query:
             from pytube import YouTube
@@ -161,13 +169,36 @@ if __name__ == "__main__":
             print(" Successfully downloaded ")
 
         elif 'scanner' in query:
-            import qrcode as qr
-            git_img = qr.make("https://github.com/utkarsh0210")
-            git_img.save("Github.png")
-
-            linkedin_img = qr.make("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
-            linkedin_img.save("LinkedIn.png")
-
+            sc = Tk()
+            sc.title("Details")
+            sc.geometry("500x400")
+            git_id = Label(sc,text="Git Hub ID")
+            git_id.pack()
+            git = Entry(sc)
+            git.pack()
+            link_id = Label(sc,text="LinkedIn ID")
+            link_id.pack()
+            link = Entry(sc)
+            link.pack()
+            try:
+                def scan():
+                    gid = git.get()
+                    lid = link.get()
+                    git_img = qr.make(gid)
+                    linkedin_img = qr.make(lid)
+                    git_img.save("Github.png")
+                    linkedin_img.save("LinkedIn.png")
+                    ans = askyesno(title="Exit",message = "Do you want to exit?")
+                    if ans == True:
+                        speak("QR codes generated")
+                        sc.destroy()
+            except Exception as e:
+                speak("An error occured")
+                sc.destroy()
+            button = Button(sc,text="Generate",command=scan)
+            button.pack()
+            sc.mainloop()
+            
         elif 'display movies' in query:
             speak("Enjoy your time sir!!")
             moviepath = "E:\MojMasti\movies"
@@ -176,7 +207,7 @@ if __name__ == "__main__":
         elif 'play some music' in query:
             speak("Here you go with music")
             musicpath = "E:\MojMasti\music"
-            songs=os.listdir(musicpath)
+            songs=os.listdir(musicpath)    #listdir func lists down all the content in this directory
             os.startfile(os.path.join(musicpath,songs[random.randint(1,10)]))
 
         elif 'shuffle it' in query:
@@ -194,40 +225,16 @@ if __name__ == "__main__":
             speak(location)
             webbrowser.open("https://www.google.nl / maps / place/" + location + "")
 
-        elif 'screen recording' in query:
-            import cv2
-            import pyautogui
-            from win32api import GetSystemMetrics
-            import numpy as np
-            import time
-            width = GetSystemMetrics(0)
-            height = GetSystemMetrics(1)
-            dim = (width,height)
-            f= cv2.VideoWriter_fourcc(*"XVID")
-            output = cv2.VideoWriter("test.mp4",f,30.0,dim)
-            now_start_tine = time.time()
-            dur=10
-            end_time = now_start_tine + dur
-            while True:
-                image = pyautogui.screenshot()
-                frame_1 = np.array(image)
-                frame = cv2.cvtColor(frame_1,cv2.COLOR_BGR2RGB)
-                output.write(frame)
-                c_time = time.time()
-                if c_time > end_time :
-                    break
-            output.release()
-            speak("Recording Ended")
 
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"the time is{strTime}")
-            #i=i+1
 
         elif 'open code' in query:
-            codePath = "C:\\Users\\utkun\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            codePath = "C:\\Users\\utkun\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe" #double back slash for escape sequence
             os.startfile(codePath)
-            #i=i+1
+
+        #GUI functions/commands
         
         elif 'internet speed' in query :
             def speedcheck():
@@ -237,7 +244,6 @@ if __name__ == "__main__":
                 up = str(round(s.download()/(10**6),3))+"Mbps"
                 lab_d.config(text=down)
                 lab_u.config(text=up)
-
 
             sp=Tk()
             sp.title(" Internet Speed Test ")
@@ -262,19 +268,7 @@ if __name__ == "__main__":
             button = Button(sp,text = "CHECK",font=("Time New Roman",20),bg="red",relief=RAISED,command=speedcheck())
             button.place(x=175,y=280,height = 40)
             time.sleep(4)
-
             sp.mainloop()
-
-        elif 'camera' in query or 'photo' in query:
-            ec.capture(0, "jarvis camera","img.jpg")
-            #i=i+1
-
-        elif 'open notes' in query:
-            speak("what should i write sir")
-            note = takeCommand()
-            file = open('jarvis.txt', 'w')
-            file.write(note)
-            #i=i+1
 
         elif 'to do list' in query:
             root=Tk()
@@ -356,38 +350,196 @@ if __name__ == "__main__":
 
             listbox.config(yscrollcommand=scrollbar.set)
             scrollbar.config(command=listbox.yview)
-
             openTask()
-
             #delete
             Delete_icon = PhotoImage(file="delete.png")
             Button(root,image=Delete_icon,bd=0,cursor="hand2",command=deleteTask).pack(side=BOTTOM,pady=13)
             root.mainloop()
 
+        
+        elif "write an email" in query:
+            speak("Okay sir,can you share the required details with us")
+            w=Tk()
+            w.title('Details')
+            w.geometry("500x400")
+            def submit():
+                sender=fr.get()
+                pwd=pw.get()
+                receiver=to.get()
+                sub=su.get()
+                print(sender)
+                print(pwd)
+                print(receiver)
+                speak("Now say the message that you want to send")
+                msg=takeCommand()
+                body=msg
+                def send(sender,pwd,receiver,sub,body):
+                    email_sender = sender
+                    email_password = pwd
+                    email_receiver = receiver
+                    em = EmailMessage()
+                    em['from'] = email_sender
+                    em['To'] = email_receiver
+                    em['Subject'] = sub
+                    em.set_content(body)
+                    context = ssl.create_default_context()
+                    try:
+                        with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
+                            smtp.login(email_sender,email_password)
+                            smtp.sendmail(email_sender,email_receiver,em.as_string())
+                            speak("Email has been sent successfully.")
+                            w.destroy()
+                    except smtplib.SMTPAuthenticationError as e:
+                        speak("Sorry! SMTP Authentication Error")
+                        w.destroy()
+                    except Exception as e:
+                        speak("An error occurred")
+                        w.destroy()
+                sen = Button(w,text="Send",command=send)
+                sen.pack()
+
+            f = Label(w,text="Sender Email address")
+            f.pack()
+            fr=Entry(w)
+            fr.pack()
+            p = Label(w,text="Enter your password")
+            p.pack()
+            pw = Entry(w, show="*")  # Mask the password
+            pw.pack()
+            t = Label(w,text="Receiver Email address")
+            t.pack()
+            to=Entry(w)
+            to.pack()
+            s = Label(w,text="Subject")
+            s.pack()
+            su=Entry()
+            su.pack()
+            button = Button(w,text = "Submit",command=submit)
+            button.pack()
+            w.mainloop()
+        
+        elif 'convert to' in query:
+            from pdf2docx import Converter
+            from docx2pdf import convert
+            from tkinter import filedialog, messagebox
+            def convert_to_docx():
+                pdf_file = filedialog.askopenfilename(title="Select PDF file", filetypes=[("PDF files", "*.pdf")])
+                if not pdf_file:
+                    return
+                docx_file = os.path.splitext(pdf_file)[0] + ".docx"
+                try:
+                    cv = Converter(pdf_file)
+                    cv.convert(docx_file)
+                    cv.close()
+                    messagebox.showinfo("Conversion Successful", f"Converted to {docx_file}")
+                except Exception as e:
+                    messagebox.showerror("Error", f"An error occurred: {e}")
+
+            def convert_to_pdf():
+                docx_file = filedialog.askopenfilename(title="Select DOCX file", filetypes=[("DOCX files", "*.docx")])
+                if not docx_file:
+                    return
+                pdf_file = os.path.splitext(docx_file)[0] + ".pdf"
+                try:
+                    convert(docx_file, pdf_file)
+                    messagebox.showinfo("Conversion Successful", f"Converted to {pdf_file}")
+                except Exception as e:
+                    messagebox.showerror("Error", f"An error occurred: {e}")
+
+            root = Tk()
+            root.title("Conversion Tool")
+            root.geometry("300x100")
+
+            button_frame = Frame(root)
+            button_frame.pack()
+
+            button1 = Button(button_frame, text="Convert to DOCX", command=convert_to_docx)
+            button1.pack(side=LEFT)
+
+            button2 = Button(button_frame, text="Convert to PDF", command=convert_to_pdf)
+            button2.pack(side=LEFT)
+
+            root.mainloop()  
+        
+        elif 'screen recording' in query:
+            import cv2
+            import pyautogui
+            from win32api import GetSystemMetrics
+            import numpy as np
+            import time
+            width = GetSystemMetrics(0)
+            height = GetSystemMetrics(1)
+            dim = (width,height)
+            f= cv2.VideoWriter_fourcc(*"XVID")
+            output = cv2.VideoWriter("test.mp4",f,30.0,dim)
+            now_start_tine = time.time()
+            dur=10
+            end_time = now_start_tine + dur
+            while True:
+                image = pyautogui.screenshot()
+                frame_1 = np.array(image)
+                frame = cv2.cvtColor(frame_1,cv2.COLOR_BGR2RGB)
+                output.write(frame)
+                c_time = time.time()
+                if c_time > end_time :
+                    break
+            output.release()
+            speak("Recording Ended")
+
+        elif 'open snipping tool' in query:
+            snip_tool = open("%windir%\\system32\\SnippingTool.exe")
+
+        elif 'open whatsapp' in query:
+            what_sapp = open("C:\\Users\\utkun\\AppData\\Local\\WhatsApp\\WhatsApp.exe")
+            what_sapp=csv.reader(what_sapp)
+
+
+        elif 'camera' in query or 'photo' in query:
+            ec.capture(0, "jarvis camera","img.jpg")
+
+        elif 'open notes' in query:
+            speak("what should i write sir")
+            note = takeCommand()
+            file = open('jarvis.txt', 'w')
+            file.write(note)
+
+        elif 'joke' in query:
+            speak(pyjokes.get_joke())
+
+
+        elif 'shutdown' in query:
+            speak("Hold On a Sec ! Your system is on its way to shut down")
+            subprocess.call('shutdown / p /f')
+
+        elif "restart" in query:
+            subprocess.call(["shutdown", "/r"])
+        
+        
+
+        '''
+        ******************************
+        NEW IDEA
+        Generative AI images app
+        NEW IDEA
+        word to pdf,doc
+        ******************************
+        '''   
+
+        '''
+        elif 'how are you' in query:
+            speak("I am fine, Thank you for asking")
+            speak("How are you, Sir")
+        
         elif "don't listen" in query or "stop listening" in query:
             speak("for how much time you want to stop Bharvishya")
             a = int(takeCommand())
             time.sleep(a)
             print(a)
-
-        elif 'how are you' in query:
-            speak("I am fine, Thank you")
-            speak("How are you, Sir")
  
-        elif 'fine' in query:
-            speak("It's good to know that your fine")
+        elif 'i am fine' in query:
+            speak("It's good to know that you are fine")
 
-        elif 'open snipping tool' in query:
-            snip_tool = open("%windir%\\system32\\SnippingTool.exe")
-            #i=i+1
-
-        elif 'open whatsapp' in query:
-            what_sapp = open("C:\\Users\\utkun\\AppData\\Local\\WhatsApp\\WhatsApp.exe")
-            what_sapp=csv.reader(what_sapp)
-            #i=i+1
-
-        elif 'show my linkedin' in query:
-            webbrowser.open("https://www.linkedin.com/in/utkarsh-gupta-650605253/")
+        
             
         elif 'exit' in query:
             speak("Thanks for giving me your time")
@@ -398,25 +550,14 @@ if __name__ == "__main__":
 
         elif "morning" in query:
             speak("A warm good" +query+"to you too")
-            speak("How are you Mister")
 
-        elif 'joke' in query:
-            speak(pyjokes.get_joke())
+        
 
         elif "why you came to world" in query:
-            speak("Thanks to Utkarsh. further It's a secret")
+            speak("Thanks to Utkarsh, further It's a secret")
 
-        elif 'shutdown' in query:
-            speak("Hold On a Sec ! Your system is on its way to shut down")
-            subprocess.call('shutdown / p /f')
-
-        elif "restart" in query:
-            subprocess.call(["shutdown", "/r"])
-
-        '''
         elif 'search'.lower() in query.lower():
-            ai(prompt=query)
-            
+            ai(prompt=query)  
         else:
             chat(chatStr=query)
-'''
+        '''
